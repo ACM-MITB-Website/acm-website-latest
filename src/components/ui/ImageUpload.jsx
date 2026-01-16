@@ -29,7 +29,7 @@ const ImageUpload = ({ onUpload, folder = 'images', customName, className = "" }
         }
     }, []);
 
-    const processFile = async (file) => {
+    const processFile = useCallback(async (file) => {
         if (!file || !file.type.startsWith('image/')) {
             setError("Please upload an image file.");
             return;
@@ -98,7 +98,7 @@ const ImageUpload = ({ onUpload, folder = 'images', customName, className = "" }
             setUploading(false);
             setPreview(null);
         }
-    };
+    }, [folder, customName, onUpload]);
 
     const handleDrop = useCallback((e) => {
         e.preventDefault();
@@ -107,7 +107,7 @@ const ImageUpload = ({ onUpload, folder = 'images', customName, className = "" }
         if (e.dataTransfer.files && e.dataTransfer.files[0]) {
             processFile(e.dataTransfer.files[0]);
         }
-    }, []);
+    }, [processFile]);
 
     const handleChange = (e) => {
         e.preventDefault();
