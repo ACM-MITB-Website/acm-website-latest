@@ -3,6 +3,7 @@ import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
 import { getStorage } from "firebase/storage";
+import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -38,6 +39,18 @@ try {
   googleProvider = new GoogleAuthProvider();
   db = getFirestore(app);
   analytics = getAnalytics(app);
+  // Initialize App Check to mitigate abuse and ensure only genuine clients access Firebase
+  try {
+    const siteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
+    if (siteKey) {
+      initializeAppCheck(app, {
+        provider: new ReCaptchaV3Provider(siteKey),
+        isTokenAutoRefreshEnabled: true
+      });
+    }
+  } catch (err) {
+    console.warn('App Check initialization failed:', err?.message || err);
+  }
   storage = getStorage(app);
   isFirebaseInitialized = true;
 
