@@ -43,4 +43,4 @@
 5. Optionally rotate keys and remove old API keys from the project if compromised.
 
 **Notes & next steps**
-- If you need, I can: 1) add a Cloud Function scaffold for issuing role claims; 2) add a minimal server endpoint to handle sensitive operations; 3) create a migration script to add `roles.admin` to chosen users.
+- If you need, I can: 1) add a Cloud Function scaffold for issuing `townhall` access; 2) add a minimal server endpoint to handle sensitive operations; 3) create a migration script to set `townhall: true` for chosen users.
