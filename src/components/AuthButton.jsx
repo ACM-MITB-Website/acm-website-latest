@@ -37,28 +37,22 @@ function AuthButton({ className = "" }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      console.log('🔐 [AuthButton] Auth state changed:', currentUser ? 'Logged in' : 'Logged out');
       setUser(currentUser);
 
       if (currentUser) {
         // Fetch user data from Firebase
         try {
-          console.log('📥 [AuthButton] Fetching user data for UID:', currentUser.uid);
           const userDocRef = doc(db, "users", currentUser.uid);
           const userDocSnap = await getDoc(userDocRef);
 
           if (userDocSnap.exists()) {
             const data = userDocSnap.data();
-            console.log('✅ [AuthButton] User data fetched:', data);
-            console.log('🔑 [AuthButton] Townhall status:', data.townhall, 'Type:', typeof data.townhall);
             setUserData(data);
           } else {
-            console.log('❌ [AuthButton] User document does not exist');
             setUserData(null);
           }
         } catch (error) {
-          console.error('❌ [AuthButton] Error fetching user data:', error);
-          console.error('Error details:', error.code, error.message);
+          console.error('Error fetching user data:', error.message);
           setUserData(null);
         }
       } else {
@@ -176,18 +170,14 @@ function AuthButton({ className = "" }) {
 
               {/* Action Buttons */}
               <div className="p-6 pt-0 space-y-2">
-                {console.log('🎨 [AuthButton] Rendering buttons. Townhall status:', userData?.townhall) || null}
                 {userData?.townhall === true && (
-                  <>
-                    {console.log('✅ [AuthButton] Rendering Townhall Admin button') || null}
-                    <a
-                      href="/townhall.html"
-                      className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-3 rounded-lg transition-all duration-200 shadow-lg hover:shadow-purple-500/50"
-                    >
-                      <Shield size={18} />
-                      <span>Townhall Admin</span>
-                    </a>
-                  </>
+                  <a
+                    href="/townhall.html"
+                    className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-3 rounded-lg transition-all duration-200 shadow-lg hover:shadow-purple-500/50"
+                  >
+                    <Shield size={18} />
+                    <span>Townhall Admin</span>
+                  </a>
                 )}
 
                 <button

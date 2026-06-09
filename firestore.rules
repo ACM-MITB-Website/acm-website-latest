@@ -32,6 +32,42 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // Public website content managed by townhall
+    match /sponsors/{sponsorId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /stories/{storyId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /news/{newsId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /nextEvents/{eventId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /eventsPageEvents/{eventId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /eventsPage/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /popups/{popupId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     // Membership applications: user create, townhall read/write
     match /applications/{appId} {
       allow create: if signedIn();

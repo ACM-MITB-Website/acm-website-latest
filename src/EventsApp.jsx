@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from './components/NavbarOptimized';
 import Footer from './components/Footer';
 import Galaxy from './components/ui/Galaxy';
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import { collection, query, where, getDocs, orderBy, onSnapshot, doc, getDoc } from 'firebase/firestore';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { collection, query, orderBy, onSnapshot, doc, getDoc } from 'firebase/firestore';
 import { db } from './firebase';
 import { Calendar, Clock, MapPin, ArrowRight, ExternalLink } from 'lucide-react';
 
@@ -18,6 +18,18 @@ const GlitchText = ({ text, className }) => {
         </div>
     );
 };
+
+const TimeUnit = ({ value, label }) => (
+    <div className="flex flex-col items-center mx-4 md:mx-8">
+        <div className="relative">
+            <div className="text-4xl md:text-7xl font-bold font-mono text-white tracking-tighter">
+                {String(value).padStart(2, '0')}
+            </div>
+            <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.8)_50%)] bg-[length:100%_4px] pointer-events-none opacity-50"></div>
+        </div>
+        <span className="text-xs md:text-sm font-mono text-acm-teal tracking-[0.3em] mt-2 uppercase">{label}</span>
+    </div>
+);
 
 const CountdownTimer = ({ targetDate }) => {
     const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
@@ -46,19 +58,6 @@ const CountdownTimer = ({ targetDate }) => {
         }, 1000);
         return () => clearTimeout(timer);
     });
-
-    const TimeUnit = ({ value, label }) => (
-        <div className="flex flex-col items-center mx-4 md:mx-8">
-            <div className="relative">
-                <div className="text-4xl md:text-7xl font-bold font-mono text-white tracking-tighter">
-                    {String(value).padStart(2, '0')}
-                </div>
-                {/* Scanline overlay for digits */}
-                <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.8)_50%)] bg-[length:100%_4px] pointer-events-none opacity-50"></div>
-            </div>
-            <span className="text-xs md:text-sm font-mono text-acm-teal tracking-[0.3em] mt-2 uppercase">{label}</span>
-        </div>
-    );
 
     return (
         <div className="flex justify-center items-center py-8">
@@ -265,7 +264,7 @@ const EventsApp = () => {
                         {loading ? (
                             <div className="col-span-full text-center py-20 text-gray-500 font-mono animate-pulse">LOADING DATA STREAMS...</div>
                         ) : (
-                            events.map((event, index) => (
+                            events.map((event) => (
                                 <HolographicCard key={event.id} event={event} />
                             ))
                         )}

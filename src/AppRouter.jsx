@@ -31,7 +31,7 @@ const RedirectToHome = () => {
         if (location.pathname !== '/') {
             navigate('/', { replace: true });
         }
-    }, []); // Run once on mount
+    }, [location.pathname, navigate]); // Run once per landed path
 
     return null;
 };

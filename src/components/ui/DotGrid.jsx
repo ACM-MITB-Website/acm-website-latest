@@ -18,7 +18,6 @@ const DotGrid = ({
     gradientEnd = null,
     proximity = 150,
     scaleTrigger = 2.0,
-    viscosity = 0.1,
     maxDisplacement = 30,
     className = '',
     style,

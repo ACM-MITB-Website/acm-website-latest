@@ -1,10 +1,11 @@
 import React, { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Target, Users, Lightbulb } from 'lucide-react';
 import TiltCard from './ui/TiltCard';
 import DotGrid from './ui/DotGrid';
 
 const Card = ({ icon: Icon, title, description, delay }) => {
+    const CardIcon = Icon;
     return (
         <TiltCard
             className="h-full"
@@ -17,7 +18,7 @@ const Card = ({ icon: Icon, title, description, delay }) => {
                 className="bg-zinc-900/50 backdrop-blur-sm border border-white/10 p-8 rounded-3xl hover:border-acm-teal/50 hover:bg-zinc-900/80 transition-all group h-full flex flex-col"
             >
                 <div className="w-16 h-16 rounded-2xl bg-linear-to-br from-zinc-800 to-black flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 border border-white/5">
-                    <Icon size={32} className="text-white group-hover:text-acm-teal transition-colors" />
+                    <CardIcon size={32} className="text-white group-hover:text-acm-teal transition-colors" />
                 </div>
                 <h3 className="text-2xl font-bold mb-4 text-white group-hover:text-acm-teal transition-colors">{title}</h3>
                 <p className="text-gray-400 leading-relaxed group-hover:text-gray-300 transition-colors grow">
@@ -30,13 +31,6 @@ const Card = ({ icon: Icon, title, description, delay }) => {
 
 const About = () => {
     const containerRef = useRef(null);
-    const { scrollYProgress } = useScroll({
-        target: containerRef,
-        offset: ["start end", "end start"]
-    });
-
-    const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
-
     return (
         <section ref={containerRef} className="relative py-32 min-h-screen flex items-center z-10 overflow-hidden">
             {/* Dot Grid Background */}

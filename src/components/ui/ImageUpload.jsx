@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect } from 'react';
-import { Upload, X, Check, Loader2, Image as ImageIcon, AlertCircle } from 'lucide-react';
+import { Upload, X, Check, Loader2, AlertCircle } from 'lucide-react';
 
 const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
@@ -29,7 +29,7 @@ const ImageUpload = ({ onUpload, folder = 'images', customName, className = "" }
         }
     }, []);
 
-    const processFile = async (file) => {
+    const processFile = useCallback(async (file) => {
         if (!file || !file.type.startsWith('image/')) {
             setError("Please upload an image file.");
             return;
@@ -60,14 +60,6 @@ const ImageUpload = ({ onUpload, folder = 'images', customName, className = "" }
                 formData.append('public_id', customName);
             }
 
-            if (import.meta.env.DEV) {
-                console.log('Uploading to Cloudinary:', {
-                    cloudName: CLOUDINARY_CLOUD_NAME,
-                    uploadPreset: CLOUDINARY_UPLOAD_PRESET,
-                    folder: folder
-                });
-            }
-
             // Upload to Cloudinary
             const response = await fetch(
                 `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
@@ -78,10 +70,6 @@ const ImageUpload = ({ onUpload, folder = 'images', customName, className = "" }
             );
 
             const data = await response.json();
-
-            if (import.meta.env.DEV) {
-                console.log('Cloudinary response:', data);
-            }
 
             if (!response.ok) {
                 throw new Error(data.error?.message || 'Upload failed');
@@ -98,7 +86,7 @@ const ImageUpload = ({ onUpload, folder = 'images', customName, className = "" }
             setUploading(false);
             setPreview(null);
         }
-    };
+    }, [customName, folder, onUpload]);
 
     const handleDrop = useCallback((e) => {
         e.preventDefault();
@@ -107,7 +95,7 @@ const ImageUpload = ({ onUpload, folder = 'images', customName, className = "" }
         if (e.dataTransfer.files && e.dataTransfer.files[0]) {
             processFile(e.dataTransfer.files[0]);
         }
-    }, []);
+    }, [processFile]);
 
     const handleChange = (e) => {
         e.preventDefault();

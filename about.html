@@ -6,39 +6,18 @@
   <link rel="icon" type="image/svg+xml" href="/vite.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ACM MITB</title>
-  <script>
-    window.onerror = function (msg, url, line, col, error) {
-      document.body.innerHTML += '<div style="background:white;color:red;position:fixed;top:0;left:0;z-index:9999;padding:20px;">' + msg + ' at ' + url + ':' + line + '</div>';
-    };
-    window.onunhandledrejection = function (e) {
-      document.body.innerHTML += '<div style="background:white;color:red;position:fixed;top:50px;left:0;z-index:9999;padding:20px;">Unhandled Rejection: ' + e.reason + '</div>';
-    };
-  </script>
   <style>
     body {
       background-color: #000000;
       color: #ffffff;
     }
 
-    #debug-loader {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-family: monospace;
-      color: #00ff00;
-    }
   </style>
 </head>
 
 <body>
   <div id="root"></div>
-  <div id="debug-loader">System Initializing...<br><small>(If this stays visible, React failed to load)</small></div>
   <script type="module" src="/src/main-about.jsx"></script>
-  <script>
-    // Remove debug loader if React mounts (App.jsx will essentially cover it, but let's be clean)
-    // We can't easily detect React mount from here without custom events, but z-index of React app is higher.
-  </script>
 </body>
 
 </html>

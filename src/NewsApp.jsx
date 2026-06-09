@@ -6,7 +6,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Navbar from './components/NavbarOptimized';
 import Footer from './components/Footer';
 import { ArrowRight, Calendar, Tag, User } from 'lucide-react';
-import { collection, onSnapshot } from 'firebase/firestore';
 import { db, auth } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';

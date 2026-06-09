@@ -188,8 +188,7 @@ export default function Galaxy({
     autoCenterRepulsion = 0,
     transparent = true,
     className = "",
-    style = {},
-    ...rest
+    style = {}
   }) {
     const ctnDom = useRef(null);
     const targetMousePos = useRef({ x: 0.5, y: 0.5 });

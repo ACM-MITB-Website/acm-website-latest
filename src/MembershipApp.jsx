@@ -34,7 +34,7 @@ const MembershipApp = () => {
     }, []);
 
     useEffect(() => {
-        stepsRef.current.forEach((el, index) => {
+        stepsRef.current.forEach((el) => {
             gsap.fromTo(el,
                 { opacity: 0, y: 50 },
                 {

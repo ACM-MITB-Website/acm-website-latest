@@ -1,7 +1,4 @@
 import React, { useEffect, useRef, useState, Suspense } from 'react';
-import { ArrowRight, Calendar, Clock, MapPin, ExternalLink } from 'lucide-react';
-import { db } from '../firebase';
-import { doc, getDoc } from 'firebase/firestore';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import Galaxy from './ui/Galaxy';
 
