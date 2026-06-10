@@ -1,23 +1,24 @@
-import React, { useCallback, useState, useEffect } from 'react';
+/**
+ * ImageUpload.jsx
+ *
+ * SECURITY: This component no longer reads VITE_CLOUDINARY_CLOUD_NAME or
+ * VITE_CLOUDINARY_UPLOAD_PRESET from the browser bundle.
+ *
+ * Previously, the Cloudinary upload preset was embedded in client-side JS,
+ * which allowed any visitor who read the bundle to upload arbitrary files to
+ * our Cloudinary account. The upload is now routed through /api/upload-image,
+ * a Vercel serverless function that holds the preset and API secret server-side.
+ *
+ * The client receives only the resulting public URL — no credentials are exposed.
+ */
+import React, { useCallback, useState } from 'react';
 import { Upload, X, Check, Loader2, AlertCircle } from 'lucide-react';
-
-const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
 const ImageUpload = ({ onUpload, folder = 'images', customName, className = "" }) => {
     const [dragActive, setDragActive] = useState(false);
     const [uploading, setUploading] = useState(false);
     const [preview, setPreview] = useState(null);
     const [error, setError] = useState(null);
-    const [configError, setConfigError] = useState(false);
-
-    // Check if Cloudinary is configured
-    useEffect(() => {
-        if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_UPLOAD_PRESET) {
-            setConfigError(true);
-            setError("Cloudinary not configured. Please add VITE_CLOUDINARY_CLOUD_NAME and VITE_CLOUDINARY_UPLOAD_PRESET to your .env file.");
-        }
-    }, []);
 
     const handleDrag = useCallback((e) => {
         e.preventDefault();
@@ -35,50 +36,44 @@ const ImageUpload = ({ onUpload, folder = 'images', customName, className = "" }
             return;
         }
 
-        // Check Cloudinary configuration before upload
-        if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_UPLOAD_PRESET) {
-            setError("Cloudinary not configured. Please contact administrator.");
-            return;
-        }
-
         setError(null);
         setUploading(true);
 
-        // Create preview
+        // Create a local preview immediately for better UX
         const reader = new FileReader();
         reader.onloadend = () => setPreview(reader.result);
         reader.readAsDataURL(file);
 
         try {
-            // Prepare form data for Cloudinary
+            // SECURITY: Send the file to our server-side proxy (/api/upload-image)
+            // instead of posting directly to Cloudinary with a client-visible preset.
+            // The proxy attaches the upload preset and API secret before forwarding,
+            // so those values are never present in the browser JS bundle.
             const formData = new FormData();
             formData.append('file', file);
-            formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-            formData.append('folder', folder);
 
             if (customName) {
                 formData.append('public_id', customName);
             }
 
-            // Upload to Cloudinary
-            const response = await fetch(
-                `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
-                {
-                    method: 'POST',
-                    body: formData
-                }
-            );
+            // The ?folder= query param tells the proxy which Cloudinary folder to use
+            const proxyUrl = `/api/upload-image?folder=${encodeURIComponent(folder)}`;
+
+            const response = await fetch(proxyUrl, {
+                method: 'POST',
+                body: formData,
+            });
 
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.error?.message || 'Upload failed');
+                throw new Error(data.error || 'Upload failed');
             }
 
-            const downloadURL = data.secure_url;
-
-            onUpload(downloadURL);
+            // The proxy returns only { secure_url } — no credentials are echoed back
+            onUpload(data.secure_url);
             setUploading(false);
+
         } catch (err) {
             console.error("Upload failed:", err);
             const errorMessage = err.message || "Upload failed. Please try again.";
@@ -126,20 +121,13 @@ const ImageUpload = ({ onUpload, folder = 'images', customName, className = "" }
                 className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-xl cursor-pointer transition-all duration-200 overflow-hidden group
                     ${dragActive ? 'border-acm-teal bg-acm-teal/10' : 'border-white/20 bg-white/5 hover:bg-white/10 hover:border-white/40'}
                     ${error ? 'border-red-500/50 bg-red-500/5' : ''}
-                    ${configError ? 'pointer-events-none opacity-50' : ''}
                 `}
                 onDragEnter={handleDrag}
                 onDragLeave={handleDrag}
                 onDragOver={handleDrag}
                 onDrop={handleDrop}
             >
-                {configError ? (
-                    <div className="flex flex-col items-center text-red-400 p-4 text-center">
-                        <AlertCircle size={24} className="mb-2" />
-                        <span className="text-sm font-medium">Cloudinary Not Configured</span>
-                        <span className="text-xs text-gray-500 mt-1">Contact administrator</span>
-                    </div>
-                ) : uploading ? (
+                {uploading ? (
                     <div className="flex flex-col items-center text-acm-teal">
                         <Loader2 className="animate-spin mb-2" size={24} />
                         <span className="text-xs font-mono">UPLOADING...</span>
@@ -174,7 +162,10 @@ const ImageUpload = ({ onUpload, folder = 'images', customName, className = "" }
             </label>
 
             {error && (
-                <p className="text-red-400 text-xs mt-1 text-center">{error}</p>
+                <p className="text-red-400 text-xs mt-1 text-center flex items-center justify-center gap-1">
+                    <AlertCircle size={12} />
+                    {error}
+                </p>
             )}
         </div>
     );

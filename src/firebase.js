@@ -1,9 +1,29 @@
+/**
+ * SECURITY NOTE — Firebase Client SDK Configuration
+ *
+ * Firebase client-side configuration values (apiKey, appId, projectId, etc.)
+ * are INTENTIONALLY PUBLIC. Google designed them to be safe to embed in
+ * client-side JavaScript. They identify your Firebase project but do NOT
+ * grant administrative access by themselves.
+ *
+ * Real security is enforced by:
+ *  1. Firebase Security Rules → firestore.rules & storage.rules
+ *  2. GCP API key restrictions (HTTP referrer & API restrictions)
+ *     → https://console.cloud.google.com/apis/credentials
+ *  3. Firebase App Check (reCAPTCHA v3) — configured below
+ *
+ * DO NOT move these values behind a server-side proxy: the Firebase client
+ * SDK requires them in the browser to initialise Auth, Firestore, and Storage.
+ *
+ * See: https://firebase.google.com/docs/projects/api-keys
+ */
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
 import { getStorage } from "firebase/storage";
 import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
+
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
