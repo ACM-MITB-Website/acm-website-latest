@@ -18,24 +18,6 @@ const EventsPage = lazy(() => import('./EventsApp')); // New Page
 
 import ScrollToTop from './components/ScrollToTop';
 
-import { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-
-const RedirectToHome = () => {
-    const location = useLocation();
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        // If the user lands on any page other than home, redirect to home
-        // This satisfies "whenever someone refreshes the website it should go to home"
-        if (location.pathname !== '/') {
-            navigate('/', { replace: true });
-        }
-    }, [location.pathname, navigate]); // Run once per landed path
-
-    return null;
-};
-
 const SuspenseFallback = () => {
     const { loading } = useLoader();
     // Only show the loader in the fallback if the global loading state is true
@@ -50,7 +32,6 @@ const AppRouter = () => {
             <LoaderProvider>
                 <Router>
                     <ScrollToTop />
-                    <RedirectToHome />
                     <Suspense fallback={<SuspenseFallback />}>
                         <Routes>
                             <Route path="/" element={<HomePage />} />
